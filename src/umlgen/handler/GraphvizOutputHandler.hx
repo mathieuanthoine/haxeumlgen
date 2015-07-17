@@ -186,8 +186,20 @@ class GraphvizOutputHandler implements IOutputHandler
             var buf = new StringBuf();
             buf.add( 'digraph uml\n' );
             buf.add( '{\n' );
-            buf.add( '        label = "Package: ' + pp.name + '";\n' );
-            buf.add( '        fontname = "Sans";\n' );
+            
+			var lMerge:String = "Package";
+			
+			for (i in 0...HaxeUmlGen.merge.length) {
+				if (pp.name == HaxeUmlGen.merge[i].name) {
+					lMerge = "Merged Package";
+					break;
+				}
+			}
+			
+			buf.add( '        label = "'+lMerge+': ' + pp.name + '";\n' );
+			
+			
+			buf.add( '        fontname = "Sans";\n' );
             buf.add( '        fontsize = "8";\n' );
             buf.add( '        bgcolor = "' + bgColor + '";\n' );
             buf.add( '           fontcolor = "' + fgColor + '";\n' );

@@ -66,10 +66,27 @@ class InputHandler
         }
         return dataTypes;
     }
+	
+	/**
+	 * return the path of the class. In case of classes merging , return a virtual path that enable the merge.
+	 * TODO: maybe there's another way to do that, better than this hack
+	 * @param	pPath path
+	 * @return new path
+	 */
+	private function buildPath (pPath:String):String {
+		if (HaxeUmlGen.merge.length != 0) {
+			for (i in 0...HaxeUmlGen.merge.length) {			
+				if (pPath.indexOf(HaxeUmlGen.merge[i].pack) == 0) {
+					return HaxeUmlGen.merge[i].name+ pPath.substr(pPath.lastIndexOf("."));
+				}
+			}
+		}
+		return pPath;
+	}
 
     private function buildEnum( xmlNode : Xml )
     {
-        var path = xmlNode.get( "path" );
+        var path = buildPath(xmlNode.get( "path" ));
         var e = new EnumModel( path );
         for( ee in xmlNode.elements() )
             if( ee.nodeName != "haxe_doc" )
@@ -84,7 +101,7 @@ class InputHandler
         // this is to skip some basic typedefs that are formatted strangely
         if( !xmlNode.elementsNamed( "a" ).hasNext() )
             return null;
-        var path = xmlNode.get( "path" );
+        var path = buildPath(xmlNode.get( "path" ));
         var ret = new TypedefModel( path );
         for( ee in xmlNode.elementsNamed( "a" ).next().elements() )
             if( ee.nodeName != "haxe_doc" )
@@ -96,15 +113,15 @@ class InputHandler
 
     private function buildClass( xmlNode : Xml )
     {
-        var path = xmlNode.get( "path" );
+        var path = buildPath(xmlNode.get( "path" ));
         var isInterface = xmlNode.exists( "interface" ) && xmlNode.get( "interface" ) == "1";
         var ret = new ClassModel( path, isInterface );
         for( ee in xmlNode.elements() )
         {
             if( ee.nodeName == "implements" )
-                ret.addParent( new Reference( "implements", ee.get( "path" ) ) );
+                ret.addParent( new Reference( "implements", buildPath(ee.get( "path" )) ) );
             else if( ee.nodeName == "extends" )
-                ret.addParent( new Reference( "extends", ee.get( "path" ) ) );
+                ret.addParent( new Reference( "extends", buildPath(ee.get( "path" )) ) );
             else if( ee.nodeName == "haxe_doc" )
                 continue;
             else
@@ -137,10 +154,10 @@ class InputHandler
     {
         switch( node.nodeName )
         {
-            case "e": return new Reference( name, node.get( "path" ), false, isPublic, isStatic );
+            case "e": return new Reference( name,buildPath(node.get( "path" )), false, isPublic, isStatic );
             case "t":
             {
-                var tref = new Reference( name, node.get( "path" ), false, isPublic, isStatic );
+                var tref = new Reference( name, buildPath(node.get( "path" )), false, isPublic, isStatic );
                 var params = node.elements();
 
                 if( params != null && tref != null )
@@ -158,7 +175,7 @@ class InputHandler
             case "a": return new Reference( name, "Anonymous", false, isPublic, isStatic );
             case "unknown": return new Reference( name, "Unknown", false, isPublic, isStatic );
             case "f": return buildFuncRef( node, name, isPublic, isStatic );
-            case "x": return new Reference( name, node.get( "path" ), false, isPublic, isStatic );
+            case "x": return new Reference( name, buildPath(node.get( "path" )), false, isPublic, isStatic );
         }
         return null;
     }
@@ -168,7 +185,7 @@ class InputHandler
      */
     private function buildClassRef( node : Xml, name, isPublic, isStatic )
     {
-        var ret = new Reference( name, node.get( "path" ), false, isPublic, isStatic );
+        var ret = new Reference( name, buildPath(node.get( "path" )), false, isPublic, isStatic );
         for( ee in node.elements() )
             ret.addTParam( buildReference( ee, "param", false, false ) );
         return ret;
@@ -211,7 +228,7 @@ class InputHandler
         var ret = params.next();                            // set return type
         switch( ret.nodeName )
         {
-            case "e","t","c","x": ref.path = ret.get( "path" );
+            case "e","t","c","x": ref.path = buildPath(ret.get( "path" ));
             case "d": ref.path = "Dynamic";
             case "a": ref.path = "Anonymous";
             case "unknown": ref.path = "Unknown";

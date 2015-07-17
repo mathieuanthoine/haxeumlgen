@@ -23,6 +23,7 @@
 package umlgen;
 
 using StringTools;
+import umlgen.model.MergedPackage;
 import umlgen.model.ModelType;
 import umlgen.model.Package;
 import umlgen.handler.IOutputHandler;
@@ -50,11 +51,16 @@ class HaxeUmlGen
      */
     public var outDir(default, null) : String;
 	
-	 /**
+	/**
      * exclude packages. if not set, no package excluded
      */
     public var exclude(default, null) : Array<String>=[];
 
+	/**
+     * merge packages. if not set, no package merged
+     */
+    public static var merge(default, null) : Array<MergedPackage>=[];	
+	
     /**
      * The output handler to use for generation.
      */
@@ -162,6 +168,18 @@ class HaxeUmlGen
         log( "HaxeUmlGen v" + VERSION + " - (c) 2011-2015 haxeumlgen contributers" );
     }
 
+	/**
+	 * build the array of MergedPackage
+	 */
+	private function buildMergedPackage (pMerge:String):Void {		
+		var lMerge:Array<String> = pMerge.split(",");
+		var lPack:Array<String>;
+		for (i in 0...lMerge.length) {
+			lPack = lMerge[i].split(":");
+			merge.push( { pack:lPack[0], name:lPack[1] } );
+		}
+	}
+	
     /**
      * parse the command line args
      * @throws string if bad option, input file not found, or output dir not found
@@ -194,14 +212,15 @@ class HaxeUmlGen
             if( aa == "-o" )
                 outDir = iter.next();
             else if( aa.indexOf( "--outdir=" ) != -1 )
-                outDir = aa.substr( 9 );
-				
+                outDir = aa.substr( 9 );	
 			else if( aa.indexOf( "--exclude=" ) != -1 )
                 exclude = aa.substr( 10 ).split(",");
-			
 			else if( aa.indexOf( "-e=" ) != -1 )
                 exclude = aa.substr( 3 ).split(",");
-				
+			else if ( aa.indexOf( "--merge=" ) != -1 ) 
+				buildMergedPackage(aa.substr( 8 ));						
+			else if ( aa.indexOf( "-m=" ) != -1 )
+				buildMergedPackage(aa.substr( 3 ));
             else if( aa == "-q" || aa == "--quiet" )
                 quiet = true;
 			else if( aa == "-n" || aa == "--namesOnly" )
@@ -277,13 +296,14 @@ class HaxeUmlGen
             }
 
             neko.Lib.println( "  Global Options:" );
-            neko.Lib.println( "    -o --outdir=DIR        Change the output directory.  Defaults to the input directory." );
-            neko.Lib.println( "    -e --exclude           Exclude packages. Use , to exclude several packages. Use Root for the name of the root package." );
-            neko.Lib.println( "    -q --quiet             Don't output to console" );
-            neko.Lib.println( "    -v --version           Show version and exit" );
-            neko.Lib.println( "    -n --namesOnly         Show names of classes only" );
-            neko.Lib.println( "    -i --inheritanceOnly   Show inheritance links only" );
-            neko.Lib.println( "    -h --help              Show this message and exit" );
+            neko.Lib.println( "    -o --outdir=DIR                             Change the output directory.  Defaults to the input directory." );
+            neko.Lib.println( "    -e --exclude=PACKAGE,PACKAGE...             Exclude packages. Use Root for the name of the root package." );
+            neko.Lib.println( "    -m --merge=PACKAGE:NAME,PACKAGE:NAME...     Merge a package and its subpackages in a same diagram." );
+            neko.Lib.println( "    -q --quiet                                  Don't output to console" );
+            neko.Lib.println( "    -v --version                                Show version and exit" );
+            neko.Lib.println( "    -n --namesOnly                              Show names of classes only" );
+            neko.Lib.println( "    -i --inheritanceOnly                        Show inheritance links only" );
+            neko.Lib.println( "    -h --help                                   Show this message and exit" );
 
             // let the handlers print their help string for additional arguments
             for( key in AVAILABLE_HANDLERS.keys() )
