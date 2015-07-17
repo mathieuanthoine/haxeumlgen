@@ -73,7 +73,7 @@ class TypedefModel implements ModelType
     {
         var sep = path.lastIndexOf( "." );
         var name = ( sep == -1 ) ? path : path.substr( sep + 1, path.length - sep - 1 );
-        return '\t "' + path + '" [ label = "{\\<typedef\\>\\n' + name + '|' + getFields() + '}" ]\n';
+        return '\t "' + path + '" [ label = "{\\<typedef\\>\\n' + name + (HaxeUmlGen.namesOnly ? '' :'|' + getFields()) + '}" ]\n';
     }
 
     /**

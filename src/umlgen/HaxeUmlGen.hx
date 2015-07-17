@@ -49,6 +49,11 @@ class HaxeUmlGen
      * output directory. if not set, same as input file
      */
     public var outDir(default, null) : String;
+	
+	 /**
+     * exclude packages. if not set, no package excluded
+     */
+    public var exclude(default, null) : Array<String>=[];
 
     /**
      * The output handler to use for generation.
@@ -60,6 +65,16 @@ class HaxeUmlGen
      */
     public static var quiet : Bool;
 
+    /**
+     * if true, show classes names only
+     */
+    public static var namesOnly : Bool;
+	
+	/**
+     * if true, show only inheritance links
+     */
+    public static var inheritanceOnly : Bool;
+	
     /**
      * list of data types
      */
@@ -107,7 +122,7 @@ class HaxeUmlGen
     {
         try
         {
-            // parse command line arguemnts
+            // parse command line arguments
             parseArgs();
 
             printInfo();
@@ -180,9 +195,20 @@ class HaxeUmlGen
                 outDir = iter.next();
             else if( aa.indexOf( "--outdir=" ) != -1 )
                 outDir = aa.substr( 9 );
+				
+			else if( aa.indexOf( "--exclude=" ) != -1 )
+                exclude = aa.substr( 10 ).split(",");
+			
+			else if( aa.indexOf( "-e=" ) != -1 )
+                exclude = aa.substr( 3 ).split(",");
+				
             else if( aa == "-q" || aa == "--quiet" )
                 quiet = true;
-            else if( inFname == null && aa == args[args.length - 1] || aa == args[args.length - 2] )
+			else if( aa == "-n" || aa == "--namesOnly" )
+                namesOnly = true;
+            else if( aa == "-i" || aa == "--inheritanceOnly" )
+                inheritanceOnly = true;
+			else if( inFname == null && aa == args[args.length - 1] || aa == args[args.length - 2] )
                 inFname = aa;
             else if( aa == args[args.length - 1] )
             {
@@ -251,10 +277,13 @@ class HaxeUmlGen
             }
 
             neko.Lib.println( "  Global Options:" );
-            neko.Lib.println( "    -o --outdir=DIR  Change the output directory.  Defaults to the input directory." );
-            neko.Lib.println( "    -q --quiet       Don't output to console" );
-            neko.Lib.println( "    -v --version     Show version and exit" );
-            neko.Lib.println( "    -h --help        Show this message and exit" );
+            neko.Lib.println( "    -o --outdir=DIR        Change the output directory.  Defaults to the input directory." );
+            neko.Lib.println( "    -e --exclude           Exclude packages. Use , to exclude several packages. Use Root for the name of the root package." );
+            neko.Lib.println( "    -q --quiet             Don't output to console" );
+            neko.Lib.println( "    -v --version           Show version and exit" );
+            neko.Lib.println( "    -n --namesOnly         Show names of classes only" );
+            neko.Lib.println( "    -i --inheritanceOnly   Show inheritance links only" );
+            neko.Lib.println( "    -h --help              Show this message and exit" );
 
             // let the handlers print their help string for additional arguments
             for( key in AVAILABLE_HANDLERS.keys() )

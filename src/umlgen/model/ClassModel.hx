@@ -104,20 +104,27 @@ class ClassModel implements ModelType
     {
         var strBuf = new StringBuf();
         var topBox = ( isInterface ) ? '\\<interface\\>\\n' + type : type;
-        strBuf.add( '\t "' + path + '" [ label = "{' + topBox + '|' + getFieldsDotStr() + '|' + getMethodsDotStr() + '}" ]\n' );
-        if( !parents.isEmpty() )
+       
+		strBuf.add( '\t "' + path + '" [ label = "{' + topBox + (HaxeUmlGen.namesOnly ? '' : '|' + getFieldsDotStr() + '|' + getMethodsDotStr()) + '}" ]\n' );
+        	
+		if( !parents.isEmpty() )
         {
             strBuf.add( '\t  edge [ arrowhead = "empty" ]\n' );
             for( pp in parents )
                 strBuf.add( '\t  "' + path + '" -> "' + pp.path + '"\n' );
         }
-        var assoc = findAssociations();
-        if( !assoc.isEmpty() )
-        {
-            strBuf.add( '\t  edge [ arrowhead = "none" ]\n' );
-            for( aa in assoc )
-                strBuf.add( '\t  "' + path + '" -> "' + aa.path + '"\n' );
-        }
+		
+		var assoc = findAssociations();
+		if( !assoc.isEmpty() )
+		{
+			if (!HaxeUmlGen.namesOnly) {
+				strBuf.add( '\t  edge [ arrowhead = "none" ]\n' );
+				if (!HaxeUmlGen.inheritanceOnly) {
+					for ( aa in assoc ) strBuf.add( '\t  "' + path + '" -> "' + aa.path + '"\n' );
+				}
+			}
+		}
+		
         return strBuf.toString();
     }
 

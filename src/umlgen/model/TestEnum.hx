@@ -29,7 +29,7 @@ class TestEnum extends haxe.unit.TestCase
     public function testEnumEmpty()
     {
         var testEnum = new EnumModel( "the.pkg.AnEnum" );
-        assertEquals( '\t "the.pkg.AnEnum" [ label = "{\\<enum\\>\\nAnEnum|}" ]\n', testEnum.getDotStr() );
+        assertEquals( '\t "the.pkg.AnEnum" [ label = "{\\<enum\\>\\nAnEnum'+(HaxeUmlGen.namesOnly?'':'|')+'}" ]\n', testEnum.getDotStr() );
     }
 
     public function testEnumOne()

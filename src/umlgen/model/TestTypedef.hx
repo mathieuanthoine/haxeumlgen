@@ -29,7 +29,7 @@ class TestTypedef extends haxe.unit.TestCase
     public function testTypedefEmpty()
     {
         var testTypedef = new TypedefModel( "the.pkg.ATypedef" );
-        assertEquals( '\t "the.pkg.ATypedef" [ label = "{\\<typedef\\>\\nATypedef|}" ]\n', testTypedef.getDotStr() );
+        assertEquals( '\t "the.pkg.ATypedef" [ label = "{\\<typedef\\>\\nATypedef'+(HaxeUmlGen.namesOnly?'':'|')+'}" ]\n', testTypedef.getDotStr() );
     }
 
     public function testTypedefOne()

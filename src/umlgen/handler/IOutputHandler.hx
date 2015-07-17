@@ -37,7 +37,7 @@ interface IOutputHandler
      * Called before any reading or writing happened to check whether all requirements are available.
      * @param generator the generator containing the loaded settings
      */
-    public function checkRequirements(generator:HaxeUmlGen) : Void;
+	public function checkRequirements(generator:HaxeUmlGen) : Void;
 
     /**
      * Tells the output handler to start the generation of the output.

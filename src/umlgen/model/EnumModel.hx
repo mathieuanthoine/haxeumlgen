@@ -77,7 +77,7 @@ class EnumModel implements ModelType
     {
         var sep = path.lastIndexOf( "." );
         var name = ( sep == -1 ) ? path : path.substr( sep + 1, path.length - sep - 1 );
-        return '\t "' + path + '" [ label = "{\\<enum\\>\\n' + name + '|' + getFieldsDotStr() + '}" ]\n';
+        return '\t "' + path + '" [ label = "{\\<enum\\>\\n' + name + (HaxeUmlGen.namesOnly?'':'|' + getFieldsDotStr()) + '}" ]\n';
     }
 
     /**

@@ -29,14 +29,16 @@ class TestClass extends TestCase
     public function testClassEmpty()
     {
         var testClass = new ClassModel( "the.pkg.AClass", false );
-        assertEquals( '\t "the.pkg.AClass" [ label = "{AClass||}" ]\n', testClass.getDotStr() );
+		var check = '\t "the.pkg.AClass" [ label = "{AClass'+(HaxeUmlGen.namesOnly?'':'||')+'}" ]\n';
+		assertEquals( check, testClass.getDotStr() );
     }
 
     public function testClassOneField()
     {
         var testClass = new ClassModel( "the.pkg.AClass", false );
         testClass.addField( new Reference( "aField", "Int", false, false, false ) );
-        var check = '\t "the.pkg.AClass" [ label = "{AClass|- aField : Int\\l|}" ]\n';
+        //TODO: changes needed for namesOnly ?
+		var check = '\t "the.pkg.AClass" [ label = "{AClass|- aField : Int\\l|}" ]\n';
         assertEquals( check, testClass.getDotStr() );
     }
 
@@ -45,7 +47,8 @@ class TestClass extends TestCase
         var testClass = new ClassModel( "the.pkg.AClass", false );
         testClass.addField( new Reference( "aField1", "Int", false, false, false ) );
         testClass.addField( new Reference( "aField2", "String", false, true, false ) );
-        var check = '\t "the.pkg.AClass" [ label = "{AClass|+ aField2 : String\\l- aField1 : Int\\l|}" ]\n';
+        //TODO: changes needed for namesOnly ?
+		var check = '\t "the.pkg.AClass" [ label = "{AClass|+ aField2 : String\\l- aField1 : Int\\l|}" ]\n';
         assertEquals( check, testClass.getDotStr() );
     }
 
@@ -53,7 +56,8 @@ class TestClass extends TestCase
     {
         var testClass = new ClassModel( "the.pkg.AClass", false );
         testClass.addField( new Reference( "aMethod", "Void", true, false, false ) );
-        var check = '\t "the.pkg.AClass" [ label = "{AClass||- aMethod () : Void\\l}" ]\n';
+        //TODO: changes needed for namesOnly ?
+		var check = '\t "the.pkg.AClass" [ label = "{AClass||- aMethod () : Void\\l}" ]\n';
         assertEquals( check, testClass.getDotStr() );
     }
 
@@ -63,7 +67,8 @@ class TestClass extends TestCase
         var method = new Reference( "aMethod", "Void", true, false, false );
         method.addParam( new Reference( "aParam", "Int" ) );
         testClass.addField( method );
-        var check = '\t "the.pkg.AClass" [ label = "{AClass||- aMethod (aParam : Int) : Void\\l}" ]\n';
+		//TODO: changes needed for namesOnly ?
+		var check = '\t "the.pkg.AClass" [ label = "{AClass||- aMethod (aParam : Int) : Void\\l}" ]\n';
         assertEquals( check, testClass.getDotStr() );
     }
 
@@ -72,7 +77,8 @@ class TestClass extends TestCase
         var testClass = new ClassModel( "the.pkg.AClass", false );
         testClass.addField( new Reference( "aMethod1", "Void", true, false, false ) );
         testClass.addField( new Reference( "aMethod2", "String", true, true, false ) );
-        var check = '\t "the.pkg.AClass" [ label = "{AClass||+ aMethod2 () : String\\l- aMethod1 () : Void\\l}" ]\n';
+        //TODO: changes needed for namesOnly ?
+		var check = '\t "the.pkg.AClass" [ label = "{AClass||+ aMethod2 () : String\\l- aMethod1 () : Void\\l}" ]\n';
         assertEquals( check, testClass.getDotStr() );
     }
 
@@ -81,14 +87,16 @@ class TestClass extends TestCase
         var testClass = new ClassModel( "the.pkg.AClass", false );
         testClass.addField( new Reference( "aField", "Int", false, false, false ) );
         testClass.addField( new Reference( "aMethod", "String", true, true, false ) );
-        var check = '\t "the.pkg.AClass" [ label = "{AClass|- aField : Int\\l|+ aMethod () : String\\l}" ]\n';
+        //TODO: changes needed for namesOnly ?
+		var check = '\t "the.pkg.AClass" [ label = "{AClass|- aField : Int\\l|+ aMethod () : String\\l}" ]\n';
         assertEquals( check, testClass.getDotStr() );
     }
 
     public function testInterface()
     {
         var testClass = new ClassModel( "the.pkg.AClass", true );
-        var check = '\t "the.pkg.AClass" [ label = "{\\<interface\\>\\nAClass||}" ]\n';
+        //TODO: changes needed for namesOnly ?
+		var check = '\t "the.pkg.AClass" [ label = "{\\<interface\\>\\nAClass||}" ]\n';
         assertEquals( check, testClass.getDotStr() );
     }
 

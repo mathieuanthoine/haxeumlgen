@@ -152,6 +152,17 @@ class GraphvizOutputHandler implements IOutputHandler
         }
     }
 
+	
+	/**
+	 * test if the package has to be excluded
+	 */
+	private function isExcluded (packageName:String, generator:HaxeUmlGen ):Bool {
+		for (exclude in generator.exclude) {
+			if (packageName.indexOf(exclude) == 0 || (packageName=="" && exclude=="Root")) return true;
+		}
+		return false;
+	}
+	
     /**
      * call dot.  this writes the dot input file and makes a system call to run dot.
      * @throws string if specified package isn't found or dot fails
@@ -160,12 +171,18 @@ class GraphvizOutputHandler implements IOutputHandler
     {
         for( pp in packages )
         {
-            HaxeUmlGen.pkg = pp.name;
-            var boxes = pp.dataTypes;
-            if( boxes.isEmpty() )
-                throw "No classes found in the desired package";
+			
+			// TODO: for Xmi2 and XmiOutputHandler ?
+			if (isExcluded(pp.name, generator)) continue;
+			
+			HaxeUmlGen.pkg = pp.name;
+			
+            var boxes = pp.dataTypes;			
+			
+            if ( boxes.isEmpty() ) 
+				throw "No classes found in the desired package";
 
-                // write dot commands to string buffer
+            // write dot commands to string buffer
             var buf = new StringBuf();
             buf.add( 'digraph uml\n' );
             buf.add( '{\n' );
@@ -186,7 +203,8 @@ class GraphvizOutputHandler implements IOutputHandler
             var outExt = Std.string(imgFormat).toLowerCase();
             var outFname = generator.outDir + "/" + pp.name + "." + outExt;
             var proc = new sys.io.Process( 'dot', [ '-T'+outExt, '-o', outFname ] );
-            proc.stdin.writeString( buf.toString() );
+           			
+			proc.stdin.writeString( buf.toString() );
             proc.stdin.close();
 
             // check exit code FIXME why does this fail on windows?
